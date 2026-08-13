@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="NexaFlow.Api/NexaFlow.Api.csproj" />
+  <Project Path="NexaFlow.Application/NexaFlow.Application.csproj" />
+  <Project Path="NexaFlow.Domain/NexaFlow.Domain.csproj" />
+  <Project Path="NexaFlow.Infrastructure/NexaFlow.Infrastructure.csproj" />
+  <Project Path="NexaFlow.Messaging/NexaFlow.Messaging.csproj" />
+  <Project Path="NexaFlow.Notifications/NexaFlow.Notifications.csproj" />
+  <Project Path="NexaFlow.Tests/NexaFlow.Tests.csproj" />
+</Solution>
