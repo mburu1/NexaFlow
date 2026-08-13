@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nexaflow-redis
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: nexaflow-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nexaflow-redis
+  template:
+    metadata:
+      labels:
+        app: nexaflow-redis
+    spec:
+      containers:
+        - name: redis
+          image: {{ .Values.redis.image }}
+          ports:
+            - containerPort: 6379
+          resources:
+            {{- toYaml .Values.redis.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nexaflow-redis
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: nexaflow-redis
+  ports:
+    - port: 6379
+      targetPort: 6379

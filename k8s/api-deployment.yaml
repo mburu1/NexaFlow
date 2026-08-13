@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nexaflow-api
+  namespace: nexaflow
+  labels:
+    app: nexaflow-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nexaflow-api
+  template:
+    metadata:
+      labels:
+        app: nexaflow-api
+    spec:
+      containers:
+        - name: nexaflow-api
+          image: ghcr.io/mburu1/nexaflow-api:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: nexaflow-api-config
+            - secretRef:
+                name: nexaflow-api-secrets
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

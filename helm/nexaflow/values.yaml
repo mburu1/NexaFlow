@@ -1,0 +1,63 @@
+namespace: nexaflow
+
+api:
+  image:
+    repository: ghcr.io/mburu1/nexaflow-api
+    tag: latest
+  replicaCount: 2
+  service:
+    port: 80
+    targetPort: 8080
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  env:
+    ASPNETCORE_ENVIRONMENT: Production
+    ASPNETCORE_URLS: "http://+:8080"
+    Jwt__Issuer: NexaFlow
+    Jwt__Audience: NexaFlow.Client
+    Jwt__AccessTokenMinutes: "15"
+    Jwt__RefreshTokenDays: "7"
+    ConnectionStrings__Redis: nexaflow-redis:6379
+    RabbitMq__HostName: nexaflow-rabbitmq
+    RabbitMq__Port: "5672"
+    Kafka__BootstrapServers: "nexaflow-kafka:9092"
+
+# Secrets (connection strings with credentials, JWT signing key) are NOT templated
+# from values.yaml — create them out-of-band, e.g. `kubectl create secret generic
+# nexaflow-api-secrets ...` or a sealed-secrets/external-secrets integration.
+# See k8s/secret.example.yaml for the expected keys.
+
+redis:
+  image: redis:7-alpine
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+rabbitmq:
+  image: rabbitmq:3-management-alpine
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+kafka:
+  image: bitnami/kafka:3.7
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi

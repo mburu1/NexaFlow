@@ -1,0 +1,8 @@
+apiVersion: v2
+name: nexaflow
+description: >
+  Helm chart for the NexaFlow API and its supporting services. Mirrors ../../k8s —
+  scaffold only, not yet deployed to a live cluster (see k8s/README.md).
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

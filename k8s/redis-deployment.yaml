@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nexaflow-redis
+  namespace: nexaflow
+  labels:
+    app: nexaflow-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nexaflow-redis
+  template:
+    metadata:
+      labels:
+        app: nexaflow-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nexaflow-redis
+  namespace: nexaflow
+spec:
+  selector:
+    app: nexaflow-redis
+  ports:
+    - port: 6379
+      targetPort: 6379
