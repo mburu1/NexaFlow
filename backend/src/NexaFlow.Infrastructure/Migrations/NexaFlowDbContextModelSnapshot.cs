@@ -373,7 +373,7 @@ namespace NexaFlow.Infrastructure.Migrations
                     b.HasOne("NexaFlow.Domain.Entities.Workflow", "Workflow")
                         .WithMany("Tasks")
                         .HasForeignKey("WorkflowId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AssignedToUser");

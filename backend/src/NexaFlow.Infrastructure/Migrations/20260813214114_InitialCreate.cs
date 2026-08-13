@@ -179,7 +179,7 @@ namespace NexaFlow.Infrastructure.Migrations
                         column: x => x.WorkflowId,
                         principalTable: "Workflows",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

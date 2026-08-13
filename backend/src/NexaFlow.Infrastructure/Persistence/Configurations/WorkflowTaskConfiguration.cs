@@ -14,10 +14,13 @@ public class WorkflowTaskConfiguration : IEntityTypeConfiguration<WorkflowTask>
         builder.Property(t => t.Status).HasConversion<string>().HasMaxLength(20);
         builder.HasIndex(t => t.WorkflowId);
 
+        // Restrict, not Cascade: SQL Server rejects cascade paths that fan back in from two
+        // routes (Tenant -> Workflow -> WorkflowTask and Tenant -> User -> WorkflowTask).
+        // WorkflowService.DeleteAsync deletes child tasks explicitly before the workflow.
         builder.HasOne(t => t.Workflow)
             .WithMany(w => w.Tasks)
             .HasForeignKey(t => t.WorkflowId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(t => t.AssignedToUser)
             .WithMany(u => u.AssignedTasks)

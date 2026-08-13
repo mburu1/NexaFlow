@@ -78,6 +78,13 @@ public sealed class WorkflowService(IUnitOfWork unitOfWork, ICurrentUserService 
     {
         var workflows = unitOfWork.Repository<Workflow>();
         var workflow = await workflows.GetByIdAsync(id, cancellationToken) ?? throw new NotFoundException(nameof(Workflow), id);
+
+        var tasks = unitOfWork.Repository<WorkflowTask>();
+        foreach (var task in await tasks.ListAsync(t => t.WorkflowId == id, cancellationToken))
+        {
+            tasks.Remove(task);
+        }
+
         workflows.Remove(workflow);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }

@@ -12,7 +12,7 @@ using NexaFlow.Infrastructure.Persistence;
 namespace NexaFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(NexaFlowDbContext))]
-    [Migration("20260813213240_InitialCreate")]
+    [Migration("20260813214114_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -376,7 +376,7 @@ namespace NexaFlow.Infrastructure.Migrations
                     b.HasOne("NexaFlow.Domain.Entities.Workflow", "Workflow")
                         .WithMany("Tasks")
                         .HasForeignKey("WorkflowId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AssignedToUser");
