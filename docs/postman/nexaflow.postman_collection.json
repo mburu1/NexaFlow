@@ -1,0 +1,338 @@
+{
+  "info": {
+    "name": "NexaFlow API",
+    "description": "Phase 1: auth (register/login/refresh/me) + Tenants/Users/Workflows/WorkflowTasks CRUD. Import, set `baseUrl`, run Login — its test script populates `accessToken`/`refreshToken` for every other request.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5080", "type": "string" },
+    { "key": "accessToken", "value": "", "type": "string" },
+    { "key": "refreshToken", "value": "", "type": "string" },
+    { "key": "workflowId", "value": "", "type": "string" },
+    { "key": "taskId", "value": "", "type": "string" },
+    { "key": "userId", "value": "", "type": "string" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"organizationName\": \"Acme Inc\",\n  \"email\": \"admin@acme.test\",\n  \"password\": \"SuperSecret123\",\n  \"fullName\": \"Ada Admin\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set('accessToken', body.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', body.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@acme.test\",\n  \"password\": \"SuperSecret123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set('accessToken', body.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', body.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/refresh", "host": ["{{baseUrl}}"], "path": ["auth", "refresh"] },
+            "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set('accessToken', body.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', body.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tenants",
+      "item": [
+        {
+          "name": "Get current tenant",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/tenants/current", "host": ["{{baseUrl}}"], "path": ["tenants", "current"] }
+          }
+        },
+        {
+          "name": "Update current tenant",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/tenants/current", "host": ["{{baseUrl}}"], "path": ["tenants", "current"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Acme Incorporated\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List users",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] }
+          }
+        },
+        {
+          "name": "Get user by id",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}"] }
+          }
+        },
+        {
+          "name": "Create user",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"member@acme.test\",\n  \"password\": \"SuperSecret123\",\n  \"fullName\": \"Mia Member\",\n  \"role\": \"Member\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  pm.collectionVariables.set('userId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update user",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Mia Member\",\n  \"role\": \"Manager\",\n  \"isActive\": true\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Workflows",
+      "item": [
+        {
+          "name": "List workflows",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/workflows", "host": ["{{baseUrl}}"], "path": ["workflows"] }
+          }
+        },
+        {
+          "name": "Get workflow by id",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/workflows/{{workflowId}}", "host": ["{{baseUrl}}"], "path": ["workflows", "{{workflowId}}"] }
+          }
+        },
+        {
+          "name": "Create workflow",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/workflows", "host": ["{{baseUrl}}"], "path": ["workflows"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Employee Onboarding\",\n  \"description\": \"Standard onboarding pipeline\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  pm.collectionVariables.set('workflowId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update workflow",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/workflows/{{workflowId}}", "host": ["{{baseUrl}}"], "path": ["workflows", "{{workflowId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Employee Onboarding\",\n  \"description\": \"Standard onboarding pipeline\",\n  \"status\": \"Active\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete workflow",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/workflows/{{workflowId}}", "host": ["{{baseUrl}}"], "path": ["workflows", "{{workflowId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Workflow Tasks",
+      "item": [
+        {
+          "name": "List tasks",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/workflows/{{workflowId}}/tasks",
+              "host": ["{{baseUrl}}"],
+              "path": ["workflows", "{{workflowId}}", "tasks"]
+            }
+          }
+        },
+        {
+          "name": "Get task by id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/workflows/{{workflowId}}/tasks/{{taskId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["workflows", "{{workflowId}}", "tasks", "{{taskId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create task",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/workflows/{{workflowId}}/tasks",
+              "host": ["{{baseUrl}}"],
+              "path": ["workflows", "{{workflowId}}", "tasks"]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Send welcome email\"\n}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  pm.collectionVariables.set('taskId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update task",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/workflows/{{workflowId}}/tasks/{{taskId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["workflows", "{{workflowId}}", "tasks", "{{taskId}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Send welcome email\",\n  \"status\": \"InProgress\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete task",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/workflows/{{workflowId}}/tasks/{{taskId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["workflows", "{{workflowId}}", "tasks", "{{taskId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] },
+            "auth": { "type": "noauth" }
+          }
+        }
+      ]
+    }
+  ]
+}
