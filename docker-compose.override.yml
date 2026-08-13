@@ -1,0 +1,10 @@
+# Auto-loaded alongside docker-compose.yml by `docker compose up`. Dev-only conveniences.
+# Port mappings (MailHog UI :8025, RabbitMQ management :15672, etc.) already live in the
+# base file — nothing to add there. This file only carries dev-only env/volume tweaks.
+services:
+  api:
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+      Logging__LogLevel__Default: Debug
+    volumes:
+      - ./logs/docker-api:/app/logs
