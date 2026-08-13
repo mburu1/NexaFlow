@@ -1,0 +1,23 @@
+.app-shell {
+  max-width: 640px;
+  margin: 10vh auto;
+  padding: 0 1.5rem;
+  font-family: system-ui, sans-serif;
+  text-align: center;
+}
+
+.app-shell h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.app-shell p {
+  color: #666;
+  line-height: 1.5;
+}
+
+.app-shell .phase-list {
+  text-align: left;
+  display: inline-block;
+  margin-top: 1.5rem;
+}
